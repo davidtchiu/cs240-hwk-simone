@@ -1,0 +1,65 @@
+body {
+    background-color: black;
+}
+
+section {
+    text-align: left;
+    width: 600px;
+}
+
+h1 {
+    font-family: 'helvetica';
+    color: #ffffff;
+    font-size: 18pt;
+}
+p {
+    font-family: 'helvetica';
+    color: #ffffff;
+    font-size: 12pt;
+}
+
+div {
+    display: inline-block;
+    width: 250px;
+    height: 250px;
+    margin: 5px;
+    padding: 5px;
+}
+.hover {
+    border: solid #eeeeee .5px;
+}
+.red {
+    border-radius: 250px 0px 0px 0px;
+    background-color: #ff0000;
+}
+.blue {
+    border-radius: 0px 250px 0px 0px;
+    background-color: #0000bb;
+}
+.green {
+    border-radius: 0px 0px 0px 250px;
+    background-color: forestgreen;
+}
+.yellow {
+    border-radius: 0px 0px 250px 0px;
+    background-color: goldenrod;
+}
+.lightred {
+    border-radius: 250px 0px 0px 0px;
+    background-color:hotpink;
+}
+.lightblue {
+    border-radius: 0px 250px 0px 0px;
+    background-color: lightblue;
+}
+.lightgreen {
+    border-radius: 0px 0px 0px 250px;
+    background-color: lightgreen;
+}
+.lightyellow {
+    border-radius: 0px 0px 250px 0px;
+    background-color: yellow;
+}
+.white {
+    background-color: #ffffff;
+}

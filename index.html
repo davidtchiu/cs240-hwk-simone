@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simone the Memory Game</title>
+    <link rel="stylesheet" href="simone.css" />
+  </head>
+
+  <body>
+    <section>
+      <h1>Simone the Memory Game</h1>
+      <p>
+        Instructions: The objective of this game is for the player to memorize
+        and replicate the color sequence that is shown. The color sequence gets
+        longer after the player successfully completes a round. Good luck!
+        <br /><br />
+      </p>
+      <p>
+        <input type="text" id="rounds" placeholder="Rounds (Ex: 10)" />
+        <button id="play">Play Simone!</button>
+      </p>
+      <p id="status"></p>
+      <br /><br />
+      <div class="red" id="redSq"></div>
+      <div class="blue" id="blueSq"></div>
+      <br />
+      <div class="green" id="greenSq"></div>
+      <div class="yellow" id="yellowSq"></div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- TODO: include your own .js files here -->
+  </body>
+</html>
