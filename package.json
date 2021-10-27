@@ -1,0 +1,22 @@
+{
+  "name": "simone",
+  "version": "1.0.0",
+  "description": "CS 240 Hwk 5 - Simone",
+  "main": " ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidtchiu/cs240-hwk-simone.git"
+  },
+  "author": "David",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davidtchiu/cs240-hwk-simone/issues"
+  },
+  "homepage": "https://github.com/davidtchiu/cs240-hwk-simone#readme",
+  "dependencies": {
+    "axios": "^0.24.0"
+  }
+}
