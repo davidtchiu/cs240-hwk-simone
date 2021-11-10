@@ -2,12 +2,11 @@
 //@author Jaykob Walson
 var gameOn = false; //this is to tell whether the game is playing or not. Will be set to true once the user presses start.
 let rounds = document.getElementById("rounds");
-rounds.addEventListener("text", function () {
-  const rounds = parseInt(document.getElementById("rounds").placeHolder);
+let start = document.getElementById("play");
+start.addEventListener("click", function () {
   gameStart();
-  var gameOn = true;
+  gameOn = true;
 });
-
 //makes the start animation of the game
 async function gameStart() {
   var red = document.getElementById("redSq");
@@ -19,19 +18,23 @@ async function gameStart() {
   for (let i = 0; i < flash; i++) {
     let randomPick = Math.floor(Math.random() * array.length - 1);
     if (randomPick == 0) {
-      red.style.backgroundColor = "hotpink";
+      let redColor = red.style.backgroundColor();
+      flash(redColor);
     } else if (randomPick == 1) {
-      blue.style.backgroundColor = "lightblue";
+      let blueColor = blue.style.backgroundColor();
+      flash(blueColor);
     }
     if (randomPick == 2) {
-      green.style.backgroundColor = "lightgreen";
+      let greenColor = green.style.backgroundColor();
+      flash(greenColor);
     }
     if (randomPick == 3) {
-      yellow.style.backgroundColor = "lightyellow";
+      let yellowColor = yellow.style.backgroundColor();
+      flash(yellowColor);
     }
     await new Promise((resolve) =>
       setTimeout(() => {
-        resolve(); // do nothing after waiting 100 ms, just alert the calling thread
+        resolve(); // do nothing after waiting 400 ms, just alert the calling thread
       }, 400)
     );
   }
@@ -39,7 +42,6 @@ async function gameStart() {
 
 async function game() {
   while (gameOn == true) {
-    let rounds = parseInt(document.getElementById("rounds"));
     for (let i = 1; i <= rounds; i++) {
       for (let j = 1; j < i; j++) {
         let randomPick = Math.floor(Math.random() * array.length - 1);
@@ -68,4 +70,19 @@ async function game() {
     }
   }
 }
-function flash(colorType) {}
+function flash(colorType) {
+  await new Promise((resolve) =>
+    setTimeout(() => {
+      if (colorType == red.style.backgroundColor) {
+        colorType == "hotpink";
+      } else if (colorType == blue.style.backgroundColor) {
+        colorType == "lightblue";
+      } else if (colorType == green.style.backgroundColor) {
+        colorType == "lightgreen";
+      } else if (colorType == yellow.style.backgroundColor) {
+        colorType == "lightyellow";
+      }
+      resolve(); // do nothing after waiting 400 ms, just alert the calling thread
+    }, 400)
+  );
+}
