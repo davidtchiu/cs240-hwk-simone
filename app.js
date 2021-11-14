@@ -91,6 +91,8 @@ async function addToSequence() {
   counter = 1;
   for (let i = 0; i <= counter; i++) {
     let random = Math.floor(Math.random() * array.length);
+    let currentStatus = document.getElementById("status");
+    currentStatus.innerHTML = "Round " + counter + " out of " + rounds;
     await flash(array[random]);
     await revert();
     sequence[i] = array[random];
@@ -105,6 +107,6 @@ async function addToSequence() {
 }
 
 function prompt(color) {
-  let clickOn = color.click();
-  return clickOn;
+  let toClick = color.click();
+  return toClick;
 }
