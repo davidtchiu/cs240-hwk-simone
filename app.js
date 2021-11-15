@@ -1,9 +1,8 @@
 //The app for the simone game
 //@author Jaykob Walson
 var gameOn = false; //this is to tell whether the game is playing or not. Will be set to true once the user presses start.
-var rounds = document.querySelector("#rounds").value;
+var rounds;
 let start = document.getElementById("play");
-console.log(rounds);
 
 var red = document.getElementById("redSq");
 var blue = document.getElementById("blueSq");
@@ -19,6 +18,7 @@ var yellowBlink = new Audio("sounds/yellow.wav");
 var array = [red, blue, green, yellow];
 
 start.addEventListener("click", async function () {
+  rounds = document.querySelector("#rounds").value;
   await gameStart();
   gameOn = true;
 });
@@ -48,6 +48,10 @@ async function gameStart() {
     }
   }
   await addToSequence();
+}
+
+function game() {
+  addToSequence();
 }
 
 async function flash(colorType) {
@@ -88,25 +92,34 @@ async function revert() {
 }
 
 async function addToSequence() {
-  counter = 1;
-  for (let i = 0; i <= counter; i++) {
+  for (let i = 1; i <= rounds; i) {
     let random = Math.floor(Math.random() * array.length);
     let currentStatus = document.getElementById("status");
-    currentStatus.innerHTML = "Round " + counter + " out of " + rounds;
-    await flash(array[random]);
-    await revert();
-    sequence[i] = array[random];
-    prompt(sequence[i]);
-    if (prompt(sequence[i]) == sequence[i]) {
-      counter++;
-      if (counter == rounds) {
-        console.log("victory!");
+    currentStatus.innerHTML = "Round " + i + " out of " + rounds;
+    for (let j = 0; j <= i; j++) {
+      sequence[i - 1] = array[random];
+      console.log(sequence[i - 1]);
+      await flash(sequence[i - 1]);
+      await revert();
+      let toAdd = await colorClicked(sequence[i - 1]);
+      if (toAdd == sequence[i - 1]) {
+        i++;
+        if (i > rounds) {
+          currentStatus.innerHTML = "You win!";
+          gameOn = false;
+        }
+      } else {
+        currentStatus.innerHTML = "You lose!";
+        gameOn = false;
       }
     }
   }
 }
 
-function prompt(color) {
-  let toClick = color.click();
-  return toClick;
+async function colorClicked(color) {
+  color.addEventListener("click", async function () {
+    await flash(color);
+    await revert();
+    return color;
+  });
 }
