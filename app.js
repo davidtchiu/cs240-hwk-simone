@@ -3,6 +3,7 @@
 var gameOn = false; //this is to tell whether the game is playing or not. Will be set to true once the user presses start.
 var rounds;
 let start = document.getElementById("play");
+var location = 0;
 
 var red = document.getElementById("redSq");
 var blue = document.getElementById("blueSq");
@@ -14,8 +15,14 @@ var redBlink = new Audio("sounds/red.wav");
 var blueBlink = new Audio("sounds/blue.wav");
 var greenBlink = new Audio("sounds/green.wav");
 var yellowBlink = new Audio("sounds/yellow.wav");
+var nextRound = new Audio("sounds/nextRound.wav");
+var currentStatus = document.getElementById("status");
+
+var counter = 1;
 
 var array = [red, blue, green, yellow];
+startHover();
+colorClicked();
 
 start.addEventListener("click", async function () {
   rounds = document.querySelector("#rounds").value;
@@ -24,8 +31,7 @@ start.addEventListener("click", async function () {
 });
 //makes the start animation of the game
 async function gameStart() {
-  console.log(document.querySelector("#rounds").value);
-  let blink = Math.floor(Math.random() * 20); //I've chosen for it to flash random tiles 20 times before the game.
+  let blink = Math.floor(16); //I've chosen for it to flash 16 times before the game.
   for (let i = 0; i < blink; i++) {
     let randomPick = Math.floor(Math.random() * array.length);
     if (randomPick == 0) {
@@ -42,16 +48,12 @@ async function gameStart() {
       await flash(yellowColor);
       await new Promise((resolve) =>
         setTimeout(() => {
-          resolve(); // do nothing after waiting 400 ms, just alert the calling thread
+          resolve();
         }, 100)
       );
     }
   }
-  await addToSequence();
-}
-
-function game() {
-  addToSequence();
+  addColors();
 }
 
 async function flash(colorType) {
@@ -75,7 +77,7 @@ async function flash(colorType) {
         revert();
       }
       resolve(); // do nothing after waiting 400 ms, just alert the calling thread
-    }, 400)
+    }, 100)
   );
 }
 
@@ -87,39 +89,103 @@ async function revert() {
       green.style.backgroundColor = "green";
       yellow.style.backgroundColor = "yellow";
       resolve(); // do nothing after waiting 400 ms, just alert the calling thread
-    }, 400)
+    }, 100)
   );
 }
 
-async function addToSequence() {
-  for (let i = 1; i <= rounds; i) {
+//adds the sequence of colors to the sequence flashed in order
+function addColors() {
+  for (let i = 0; i < rounds; i++) {
     let random = Math.floor(Math.random() * array.length);
-    let currentStatus = document.getElementById("status");
-    currentStatus.innerHTML = "Round " + i + " out of " + rounds;
-    for (let j = 0; j <= i; j++) {
-      sequence[i - 1] = array[random];
-      console.log(sequence[i - 1]);
-      await flash(sequence[i - 1]);
-      await revert();
-      let toAdd = await colorClicked(sequence[i - 1]);
-      if (toAdd == sequence[i - 1]) {
-        i++;
-        if (i > rounds) {
-          currentStatus.innerHTML = "You win!";
-          gameOn = false;
-        }
-      } else {
-        currentStatus.innerHTML = "You lose!";
-        gameOn = false;
+    sequence[i] == array[random];
+  }
+}
+
+//increments the counter by 1 when the user clicks the correct colors in order
+function updateCounter() {
+  counter++;
+  let currentStatus = document.getElementById("status");
+  currentStatus.innerHTML = "Round " + counter + " of " + rounds;
+}
+
+//When the mouse hovers over a panel, it lights up.
+async function startHover() {
+  red.addEventListener("mouseover", async function () {
+    red.style.backgroundColor = "white";
+  });
+  red.addEventListener("mouseout", async function () {
+    await revert();
+  });
+  blue.addEventListener("mouseover", async function () {
+    blue.style.backgroundColor = "white";
+  });
+  blue.addEventListener("mouseout", async function () {
+    await revert();
+  });
+  green.addEventListener("mouseover", async function () {
+    green.style.backgroundColor = "white";
+  });
+  green.addEventListener("mouseout", async function () {
+    await revert();
+  });
+  yellow.addEventListener("mouseover", async function () {
+    yellow.style.backgroundColor = "white";
+  });
+  yellow.addEventListener("mouseout", async function () {
+    await revert();
+  });
+}
+
+// async function displaySequence() {
+//   for (let i = 0; i < counter; i++) {
+//     await flash(sequence[i]);
+//   }
+// }
+
+//The game itself. Different outcomes when a color button is pushed (win, lose, etc.)
+function handleClick(color) {
+  if (gameOn) {
+    if (sequence[location] == color) {
+      location++;
+      if (location == counter) {
+        currentStatus.innerHTML == "On to the next round.";
+        nextRound.play();
+        updateCounter();
+        // displaySequence();
       }
+    } else {
+      currentStatus.innerHTML == "Sorry, you lose!";
+      let loss = new Audio("sounds/wrong.wav");
+      loss.play();
+      document.body.style.backgroundColor = "crimson"; //resembles blood, which resembles a blow to pride.
+      gameOn = false;
+    }
+    if (counter > rounds) {
+      currentStatus.innerHTML == "Congratulations! You win!";
+      let victory = new Audio("sounds/win.mp3");
+      victory.play();
+      document.body.style.backgroundColor = "gold"; //because gold is the color of victory
+      gameOn = false;
     }
   }
 }
 
-async function colorClicked(color) {
-  color.addEventListener("click", async function () {
-    await flash(color);
-    await revert();
-    return color;
+//The function that showcases when a colored panel is clicked.
+async function colorClicked() {
+  red.addEventListener("mousedown", async function () {
+    await flash(red);
+    handleClick(red);
+  });
+  blue.addEventListener("mousedown", async function () {
+    await flash(blue);
+    handleClick(blue);
+  });
+  green.addEventListener("mousedown", async function () {
+    await flash(green);
+    handleClick(green);
+  });
+  yellow.addEventListener("mousedown", async function () {
+    await flash(yellow);
+    handleClick(yellow);
   });
 }
