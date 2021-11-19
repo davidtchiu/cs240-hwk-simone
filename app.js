@@ -1,9 +1,9 @@
 //The app for the simone game
 //@author Jaykob Walson
+// const getAxios = require("axios");
 var gameOn = false; //this is to tell whether the game is playing or not. Will be set to true once the user presses start.
 var rounds;
 let start = document.getElementById("play");
-var location = 0;
 
 var red = document.getElementById("redSq");
 var blue = document.getElementById("blueSq");
@@ -19,6 +19,7 @@ var nextRound = new Audio("sounds/nextRound.wav");
 var currentStatus = document.getElementById("status");
 
 var counter = 1;
+var listPosition = 0;
 
 var array = [red, blue, green, yellow];
 startHover();
@@ -27,11 +28,10 @@ colorClicked();
 start.addEventListener("click", async function () {
   rounds = document.querySelector("#rounds").value;
   await gameStart();
-  gameOn = true;
 });
 //makes the start animation of the game
 async function gameStart() {
-  let blink = Math.floor(16); //I've chosen for it to flash 16 times before the game.
+  let blink = 8; //I've chosen for it to flash 8 times before the game.
   for (let i = 0; i < blink; i++) {
     let randomPick = Math.floor(Math.random() * array.length);
     if (randomPick == 0) {
@@ -53,31 +53,33 @@ async function gameStart() {
       );
     }
   }
+  gameOn = true;
+  currentStatus.innerHTML = "Round " + counter + " of " + rounds;
   addColors();
 }
 
 async function flash(colorType) {
   await new Promise((resolve) =>
-    setTimeout(() => {
+    setTimeout(async () => {
       if (colorType == red.style.backgroundColor) {
         redBlink.play();
         red.style.backgroundColor = "hotpink";
-        revert();
+        await revert();
       } else if (colorType == blue.style.backgroundColor) {
         blueBlink.play();
         blue.style.backgroundColor = "lightblue";
-        revert();
+        await revert();
       } else if (colorType == green.style.backgroundColor) {
         greenBlink.play();
         green.style.backgroundColor = "lightgreen";
-        revert();
+        await revert();
       } else if (colorType == yellow.style.backgroundColor) {
         yellowBlink.play();
         yellow.style.backgroundColor = "lightyellow";
-        revert();
+        await revert();
       }
       resolve(); // do nothing after waiting 400 ms, just alert the calling thread
-    }, 100)
+    }, 400)
   );
 }
 
@@ -89,79 +91,84 @@ async function revert() {
       green.style.backgroundColor = "green";
       yellow.style.backgroundColor = "yellow";
       resolve(); // do nothing after waiting 400 ms, just alert the calling thread
-    }, 100)
+    }, 400)
   );
 }
 
 //adds the sequence of colors to the sequence flashed in order
-function addColors() {
+async function addColors() {
   for (let i = 0; i < rounds; i++) {
     let random = Math.floor(Math.random() * array.length);
-    sequence[i] == array[random];
+    sequence[i] = array[random];
   }
+  await displaySequence();
 }
 
 //increments the counter by 1 when the user clicks the correct colors in order
-function updateCounter() {
+async function updateCounter() {
   counter++;
-  let currentStatus = document.getElementById("status");
   currentStatus.innerHTML = "Round " + counter + " of " + rounds;
+  await displaySequence();
 }
 
 //When the mouse hovers over a panel, it lights up.
 async function startHover() {
   red.addEventListener("mouseover", async function () {
-    red.style.backgroundColor = "white";
+    red.classList.add("hover");
   });
   red.addEventListener("mouseout", async function () {
-    await revert();
+    red.classList.remove("hover");
   });
   blue.addEventListener("mouseover", async function () {
-    blue.style.backgroundColor = "white";
+    blue.classList.add("hover");
   });
   blue.addEventListener("mouseout", async function () {
-    await revert();
+    blue.classList.remove("hover");
   });
   green.addEventListener("mouseover", async function () {
-    green.style.backgroundColor = "white";
+    green.classList.add("hover");
   });
   green.addEventListener("mouseout", async function () {
-    await revert();
+    green.classList.remove("hover");
   });
   yellow.addEventListener("mouseover", async function () {
-    yellow.style.backgroundColor = "white";
+    yellow.classList.add("hover");
   });
   yellow.addEventListener("mouseout", async function () {
-    await revert();
+    yellow.classList.remove("hover");
   });
 }
 
-// async function displaySequence() {
-//   for (let i = 0; i < counter; i++) {
-//     await flash(sequence[i]);
-//   }
-// }
+//Flashes color(s) of the sequence, then the user clicks on the matching order.
+async function displaySequence() {
+  for (let i = 0; i < counter; i++) {
+    await flash(sequence[i]);
+    console.log(sequence[i]);
+  }
+}
 
 //The game itself. Different outcomes when a color button is pushed (win, lose, etc.)
 function handleClick(color) {
   if (gameOn) {
-    if (sequence[location] == color) {
-      location++;
-      if (location == counter) {
-        currentStatus.innerHTML == "On to the next round.";
+    currentStatus.innerHTML = "Round " + counter + " of " + rounds;
+    if (sequence[listPosition] == color) {
+      listPosition++;
+      if (listPosition == counter) {
+        currentStatus.innerHTML = "On to the next round.";
+        console.log(color);
+        listPosition = 0;
         nextRound.play();
         updateCounter();
-        // displaySequence();
       }
     } else {
-      currentStatus.innerHTML == "Sorry, you lose!";
+      currentStatus.innerHTML = "Sorry, you lose!";
       let loss = new Audio("sounds/wrong.wav");
       loss.play();
-      document.body.style.backgroundColor = "crimson"; //resembles blood, which resembles a blow to pride.
+      document.body.style.backgroundColor = "darkred"; //resembles blood, which resembles a blow to pride.
       gameOn = false;
     }
     if (counter > rounds) {
-      currentStatus.innerHTML == "Congratulations! You win!";
+      currentStatus.innerHTML = "Congratulations! You win!";
       let victory = new Audio("sounds/win.mp3");
       victory.play();
       document.body.style.backgroundColor = "gold"; //because gold is the color of victory
